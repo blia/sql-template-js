@@ -169,6 +169,37 @@ The library works by:
 
 See the [examples directory](./examples) for more usage examples.
 
+### Advanced Example
+
+Check out our [advanced example](./examples/advanced-example.ts) that demonstrates the full power of sql-template-js by combining:
+
+- SQL Views for complex data aggregation
+- JavaScript expressions for dynamic query parts
+- Conditional filters that can be toggled at runtime
+- Type-safe parameters for data validation
+
+```typescript
+// Dynamic query with conditional filters and custom sorting
+const getOrderAnalytics = sql`
+  SELECT * FROM "ORDER_TOTAL"
+  WHERE 
+    ${props => props.minTotal ? createFilter('total_amount', '>=')(props) : '1=1'}
+    AND ${props => props.afterDate ? createFilter('last_order_date', '>=')(props) : '1=1'}
+  ORDER BY ${props => props.orderBy || 'total_amount'} ${props => props.orderDirection || 'DESC'}
+  LIMIT $(limit):integer
+`;
+
+// Use with different parameters each time
+const bigSpenders = await getOrderAnalytics({
+  minTotal: true,
+  paramName: 'minTotalAmount',
+  minTotalAmount: 500,
+  orderBy: 'username',
+  orderDirection: 'ASC',
+  limit: 10
+});
+```
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

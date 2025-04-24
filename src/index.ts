@@ -15,7 +15,8 @@ export function createSqlify(connection: SqlConnection): Sqlify & ((strings: Tem
   
   // Add the other methods from Sqlify to the function
   Object.assign(sqlTemplate, {
-    fromFile: sqlify.fromFile.bind(sqlify)
+    fromFile: sqlify.fromFile.bind(sqlify),
+    createQueryFromSchema: sqlify.createQueryFromSchema.bind(sqlify)
   });
   
   return sqlTemplate as Sqlify & ((strings: TemplateStringsArray, ...values: any[]) => SqlExecutor);

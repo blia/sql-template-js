@@ -58,6 +58,14 @@ export class Sqlify {
     // Otherwise treat as a regular SQL query
     return this.createQueryFromSql(fileContent);
   }
+  
+  /**
+   * Creates a model class directly from SQL schema string
+   * (Public method for use in examples and testing)
+   */
+  createQueryFromSchema(schema: string, modelName: string): ModelClass {
+    return this.createModelFromSchema(schema, modelName);
+  }
 
   /**
    * Creates a query function from raw SQL
