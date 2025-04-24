@@ -93,8 +93,8 @@ You can load SQL from external files:
 
 ```typescript
 // Load a regular query
-const getUserOrders = sql.fromFile('./queries/get-user-orders.sql');
-const orders = await getUserOrders({ userId: 1 });
+const getUserQuery = sql.fromFile('./queries/users.sql');
+const user = await getUserQuery({ id: 1 });
 
 // Load a schema and create a model
 const User = sql.fromFile('./schemas/user.sql');
