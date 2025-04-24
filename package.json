@@ -1,5 +1,5 @@
 {
-  "name": "sqlify",
+  "name": "sql-template-js",
   "version": "1.0.0",
   "description": "SQL template utility for Node.js",
   "main": "dist/index.js",
@@ -26,7 +26,15 @@
     "nodejs",
     "database"
   ],
-  "author": "",
+  "author": "Your Name",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/sql-template-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/sql-template-js/issues"
+  },
+  "homepage": "https://github.com/yourusername/sql-template-js#readme",
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^29.5.14",

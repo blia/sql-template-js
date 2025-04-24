@@ -1,4 +1,4 @@
-# Sqlify
+# sql-template-js
 
 A flexible SQL template utility for Node.js that works with any database library.
 
@@ -13,7 +13,7 @@ A flexible SQL template utility for Node.js that works with any database library
 ## Installation
 
 ```bash
-npm install sqlify
+npm install sql-template-js
 ```
 
 ## Usage
@@ -21,7 +21,7 @@ npm install sqlify
 ### Basic Example
 
 ```typescript
-import createSqlify from 'sqlify';
+import createSqlify from 'sql-template-js';
 import { Pool } from 'pg'; // or any other DB library
 
 // Initialize with your database connection
