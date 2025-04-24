@@ -110,7 +110,7 @@ SELECT * FROM users WHERE id = $(id):integer
 
 ### Model Classes from Schemas
 
-When loading a file containing a SQL schema definition (using CREATE TABLE), a model class is automatically created:
+When loading a file containing a SQL schema definition (using CREATE TABLE or CREATE VIEW), a model class is automatically created:
 
 ```typescript
 // Schema file: user.sql
@@ -132,6 +132,28 @@ const newUser = await User.create({ name: 'John', email: 'john@example.com' });
 await User.update(1, { name: 'Jane' });
 await User.delete(1);
 ```
+
+### Working with Views
+
+You can also create models from SQL VIEW definitions:
+
+```typescript
+// View file: user_info.sql
+/*
+CREATE VIEW "UserInfo" AS
+    SELECT u.id, email, name, bio
+    FROM "User" u
+    LEFT JOIN "Profile" p ON u.id = p."userId";
+*/
+
+const UserInfo = sql.fromFile('./views/user_info.sql');
+
+// Query the view
+const users = await UserInfo.find();
+const user = await UserInfo.findOne({ id: 1 });
+```
+
+The library automatically extracts field names from the SELECT statement for views, making them accessible in your code.
 
 ## How It Works
 

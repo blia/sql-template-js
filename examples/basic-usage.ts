@@ -23,6 +23,9 @@ const findUserByProperty = sql`SELECT * FROM users WHERE ${prop => prop.field} =
 const userQuery = sql.fromFile(__dirname + '/queries/users.sql');
 const User = sql.fromFile(__dirname + '/schemas/user.sql');
 
+// Example 4: Load a view
+const UserInfo = sql.fromFile(__dirname + '/views/user_info.sql');
+
 // Execute the queries
 async function run() {
   // Execute the basic query
@@ -43,6 +46,10 @@ async function run() {
   
   const userOne = await User.findOne({ id: 1 });
   console.log('User from model:', userOne);
+  
+  // Use the view model
+  const userInfos = await UserInfo.find();
+  console.log('User info from view:', userInfos);
 }
 
 run().catch(console.error);

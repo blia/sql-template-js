@@ -48,8 +48,9 @@ export class Sqlify {
   fromFile(filePath: string): SqlExecutor | ModelClass {
     const fileContent = fs.readFileSync(path.resolve(filePath), 'utf-8');
     
-    // Check if this is a schema definition
+    // Check if this is a schema definition (table or view)
     if (fileContent.toLowerCase().includes('create table') || 
+        fileContent.toLowerCase().includes('create view') ||
         fileContent.toLowerCase().includes('schema')) {
       return this.createModelFromSchema(fileContent, path.basename(filePath, '.sql'));
     }
@@ -68,19 +69,54 @@ export class Sqlify {
   }
 
   /**
-   * Creates a model class from SQL schema
+   * Creates a model class from SQL schema (table or view)
    */
-  private createModelFromSchema(schema: string, tableName: string): ModelClass {
+  private createModelFromSchema(schema: string, modelName: string): ModelClass {
+    // Determine if this is a view or a table
+    const isView = schema.toLowerCase().includes('create view');
+    
+    // Extract the real table/view name from the schema if available
+    const nameMatch = isView 
+      ? schema.match(/create\s+view\s+(?:"([^"]+)"|([^\s]+))/i)
+      : schema.match(/create\s+table\s+(?:"([^"]+)"|([^\s]+))/i);
+    
+    const tableName = nameMatch 
+      ? (nameMatch[1] || nameMatch[2]) // Get the name from quotes or without quotes
+      : modelName;
+    
     // Extract fields from the schema
-    const fieldRegex = /(\w+)\s+(\w+)/g;
-    const fields: Record<string, { type: string }> = {};
+    let fields: Record<string, { type: string }> = {};
     const connection = this.connection;
     const sqlMethod = this.sql.bind(this);
     
-    let match;
-    while ((match = fieldRegex.exec(schema)) !== null) {
-      const [, fieldName, fieldType] = match;
-      fields[fieldName] = { type: this.mapSqlTypeToJs(fieldType) };
+    if (isView) {
+      // For views, try to extract fields from the SELECT statement
+      const selectMatch = schema.match(/SELECT\s+(.+?)\s+FROM/is);
+      if (selectMatch) {
+        const selectPart = selectMatch[1];
+        // Split by commas but preserve functions like COUNT(*)
+        const fieldList = selectPart.split(',').map(f => f.trim());
+        
+        for (const field of fieldList) {
+          // Handle aliased fields like "u.id AS user_id" or "COUNT(*) AS count"
+          const aliasMatch = field.match(/(?:.*\s+AS\s+)(\w+)$/i);
+          if (aliasMatch) {
+            fields[aliasMatch[1]] = { type: 'any' };
+          } else {
+            // Handle simple fields, get the last part after dot or the whole name
+            const simpleName = field.includes('.') ? field.split('.').pop()! : field;
+            fields[simpleName] = { type: 'any' };
+          }
+        }
+      }
+    } else {
+      // For tables, extract field types as before
+      const fieldRegex = /(\w+)\s+(\w+)/g;
+      let match;
+      while ((match = fieldRegex.exec(schema)) !== null) {
+        const [, fieldName, fieldType] = match;
+        fields[fieldName] = { type: this.mapSqlTypeToJs(fieldType) };
+      }
     }
     
     // Create the model class
