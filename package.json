@@ -29,12 +29,12 @@
   "author": "Your Name",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/sql-template-js.git"
+    "url": "git+https://github.com/blia/sql-template-js.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/sql-template-js/issues"
+    "url": "https://github.com/blia/sql-template-js/issues"
   },
-  "homepage": "https://github.com/yourusername/sql-template-js#readme",
+  "homepage": "https://github.com/blia/sql-template-js#readme",
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^29.5.14",
